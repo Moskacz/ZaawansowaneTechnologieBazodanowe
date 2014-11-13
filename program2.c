@@ -49,9 +49,11 @@ int testMemoryDatabasePerformance(int nameLength, int descriptionLength, int inM
     rc = sqlite3_prepare_v2(db,sql,strlen(sql), &stmt, NULL);
 
     int i;
-    int MAX = 100;
+    int MAX = 100000;
 
     clock_t start = clock();
+
+    sqlite3_exec(db, "BEGIN", 0, 0, 0);
 
     for (i = 0; i < MAX; i++) {
         sqlite3_bind_int(stmt, 0, i);
@@ -63,6 +65,8 @@ int testMemoryDatabasePerformance(int nameLength, int descriptionLength, int inM
         }
         sqlite3_reset(stmt);
     }
+
+    sqlite3_exec(db, "COMMIT", 0, 0, 0);
 
     printf("czas wypełniania danymi[s]: %f\n", ((float)clock()-(float)start)/CLOCKS_PER_SEC);
 
